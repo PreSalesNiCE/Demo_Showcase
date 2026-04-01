@@ -3,19 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NiCE - Solução Personalizada</title>
+    <title>NiCE - Atendimento Digital</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Phosphor Icons (Alternativa ao Lucide para Vanilla HTML) -->
+    <!-- Phosphor Icons para ícones modernos -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Cognigy xApp SDK -->
-    <script src="/sdk/app-page-sdk.js"></script>
 
     <script>
         tailwind.config = {
@@ -26,7 +23,26 @@
                     },
                     colors: {
                         niceBlue: '#2A85FF',
-                        niceDark: '#0B0F19'
+                        niceCyan: '#00D2FF',
+                        nicePurple: '#8A2BE2',
+                        niceDark: '#070B14'
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
                     }
                 }
             }
@@ -36,665 +52,166 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
-        }
-        
-        /* Animações de entrada */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-        
-        .fade-in-up.loaded {
-            opacity: 1;
-            transform: translateY(0);
+            background-color: #070B14;
+            /* REMOVIDO: color: #ffffff; (Isso estava quebrando o chat) */
+            overflow-x: hidden;
         }
 
-        /* Gradient Animation */
-        .bg-pan-left {
-            animation: bg-pan-left 8s both infinite alternate;
-        }
-        @keyframes bg-pan-left {
-            0% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* Text Gradient Animado */
+        .text-gradient {
+            background: linear-gradient(to right, #00D2FF, #2A85FF, #8A2BE2, #00D2FF);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: shine 5s linear infinite;
         }
 
-        /* Estilo da Marca D'água da Logo do Case */
-        .logo-watermark {
-            background-size: 60%;
-            background-position: center right;
-            background-repeat: no-repeat;
-            /* Transforma logos coloridos ou pretos em uma marca d'água fantasma esbranquiçada e bem sutil */
-            filter: grayscale(100%) invert(100%) opacity(0.06); 
-            pointer-events: none;
-        }
-        
-        /* Ajuste para mobile na logo */
-        @media (max-width: 1024px) {
-            .logo-watermark {
-                background-size: 90%;
-                background-position: center;
-                filter: grayscale(100%) invert(100%) opacity(0.04); 
+        @keyframes shine {
+            to {
+                background-position: 200% center;
             }
+        }
+
+        /* Glassmorphism effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Grid de fundo sutil */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        /* Indicador apontando para o chat */
+        .chat-indicator {
+            animation: bounce-right-down 2s infinite;
+        }
+
+        @keyframes bounce-right-down {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(10px, 10px); }
         }
     </style>
 </head>
-<body class="selection:bg-niceBlue selection:text-white antialiased">
+<body class="selection:bg-niceBlue selection:text-white min-h-screen relative flex flex-col justify-center">
 
-    <!-- HEADER NAVBAR -->
-    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo NiCE Simulado -->
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-niceDark flex items-center justify-center relative overflow-hidden shadow-md">
-                        <div class="w-2.5 h-2.5 rounded-full bg-niceBlue absolute top-2.5 left-2"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-niceBlue absolute top-2.5 right-2"></div>
-                    </div>
-                    <span class="font-extrabold text-2xl tracking-tight text-slate-900">NiCE</span>
-                </div>
-                <div>
-                    <button onclick="submitToBot('falar_especialista')" class="bg-slate-900 hover:bg-slate-800 text-white px-5 py-2.5 rounded-full text-sm font-medium transition-colors shadow-sm flex items-center gap-2">
-                        <i class="ph ph-chat-teardrop-text text-lg"></i>
-                        Falar com Especialista
-                    </button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <!-- BACKGROUND ANIMADO (Blobs de Gradiente) -->
+    <div class="fixed inset-0 w-full h-full z-0 overflow-hidden pointer-events-none bg-niceDark bg-grid">
+        <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-nicePurple/20 mix-blend-screen filter blur-[100px] opacity-70 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] rounded-full bg-niceCyan/20 mix-blend-screen filter blur-[120px] opacity-60 animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[700px] h-[700px] rounded-full bg-niceBlue/20 mix-blend-screen filter blur-[150px] opacity-50 animate-blob" style="animation-delay: 4s;"></div>
+    </div>
 
-    <!-- 1. HERO INICIAL -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-niceDark">
-        <!-- Elementos visuais de fundo -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-            <div class="absolute top-[-20%] right-[-10%] w-[50%] h-[70%] rounded-full bg-blue-600/20 blur-[120px]"></div>
-            <div class="absolute bottom-[-20%] left-[-10%] w-[50%] h-[70%] rounded-full bg-purple-600/20 blur-[120px]"></div>
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4wNSkiLz48L3N2Zz4=')]"></div>
-        </div>
-
-        <div id="hero-content" class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 fade-in-up">
-            <div class="text-center max-w-4xl mx-auto">
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-300 font-medium text-sm mb-6 border border-blue-500/30 backdrop-blur-sm">
-                    <i class="ph ph-lightning text-lg"></i>
-                    <span>Recomendação Personalizada da IA</span>
-                </div>
-                
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-6">
-                    Olá, <span id="dyn-nome">Visitante</span>.<br />
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-400 bg-pan-left">
-                        Vamos revolucionar o seu <span id="dyn-kpi-title">Indicador</span>.
-                    </span>
-                </h1>
-                
-                <p class="text-lg md:text-xl text-slate-300 mb-10 leading-relaxed max-w-3xl mx-auto">
-                    Você nos disse que precisava melhorar seus indicadores de <span id="dyn-kpi-text" class="font-bold text-white">KPI</span>. 
-                    Conheça o <strong id="dyn-solution" class="text-blue-400">NiCE Solution</strong>, a solução projetada exatamente para transformar esse desafio em vantagem competitiva.
-                </p>
-                
-                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <button onclick="document.getElementById('como-funciona').scrollIntoView({behavior: 'smooth'})" class="w-full sm:w-auto px-8 py-4 rounded-full bg-niceBlue hover:bg-blue-600 text-white font-semibold text-lg transition-all shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 group">
-                        Ver Solução em Ação
-                        <i class="ph ph-arrow-right text-xl group-hover:translate-x-1 transition-transform"></i>
-                    </button>
-                    <button onclick="submitToBot('assistir_demo')" class="w-full sm:w-auto px-8 py-4 rounded-full bg-white/10 hover:bg-white/20 text-white font-semibold text-lg transition-all backdrop-blur-sm border border-white/10 flex items-center justify-center gap-2">
-                        <i class="ph ph-play-circle text-2xl"></i>
-                        Assistir Demo Interativa
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 2. IMAGENS E DESCRIÇÕES DA SOLUÇÃO -->
-    <section id="como-funciona" class="py-24 bg-white relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- CONTEÚDO PRINCIPAL (Isolado com a classe text-white aqui) -->
+    <main class="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center justify-between gap-16 h-full min-h-screen text-white">
+        
+        <!-- Coluna da Esquerda (Textos e CTA) -->
+        <div class="w-full lg:w-1/2 flex flex-col justify-center">
             
-            <div class="text-center max-w-3xl mx-auto mb-20 fade-in-up">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                    Como o <span id="dyn-solution-sub">NiCE Solution</span> atua na sua operação
-                </h2>
-                <p id="dyn-solution-desc" class="text-lg text-slate-600">
-                    Ferramentas inteligentes que se integram ao seu ecossistema atual para entregar resultados imediatos no seu Contact Center.
-                </p>
+            <!-- Logo Label -->
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel mb-8 w-max animate-float">
+                <div class="w-2 h-2 rounded-full bg-niceCyan animate-pulse"></div>
+                <span class="text-sm font-medium tracking-wide text-slate-300">Inteligência Artificial NiCE</span>
             </div>
 
-            <!-- Bloco 1 -->
-            <div class="flex flex-col lg:flex-row items-center gap-12 mb-24 fade-in-up">
-                <div class="w-full lg:w-1/2">
-                    <div class="aspect-video rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden relative shadow-xl group cursor-pointer">
-                        <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 to-blue-50 flex items-center justify-center transition-transform group-hover:scale-105">
-                            <i class="ph-duotone ph-chart-line-up text-7xl text-blue-400"></i>
-                        </div>
-                        <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur rounded-lg p-3 shadow-sm border border-slate-100">
-                            <p class="font-medium text-slate-700 text-sm flex items-center gap-2">
-                                <i class="ph-fill ph-check-circle text-green-500"></i> Painel de IA em Tempo Real
-                            </p>
-                        </div>
+            <h1 class="text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                Converse com o <br />
+                <span class="text-gradient">Agentico.</span>
+            </h1>
+
+            <p class="text-lg lg:text-xl text-slate-400 mb-10 leading-relaxed max-w-lg">
+                Seu assistente virtual especialista em CX. Participe do nosso sorteio exclusivo, descubra como melhorar seus KPIs e viva a experiência de um atendimento fluido e inteligente.
+            </p>
+
+            <!-- Cards de Funcionalidades -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-12">
+                <div class="glass-panel p-5 rounded-2xl flex gap-4 items-start transition-transform hover:-translate-y-1 duration-300">
+                    <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400">
+                        <i class="ph-fill ph-ticket text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white mb-1">Sorteio de 3 Airtags</h3>
+                        <p class="text-sm text-slate-400">Cadastre-se rapidamente através do chat.</p>
                     </div>
                 </div>
-                <div class="w-full lg:w-1/2">
-                    <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
-                        <i class="ph ph-brain text-2xl"></i>
-                    </div>
-                    <h3 id="dyn-feat1-title" class="text-2xl font-bold text-slate-900 mb-4">
-                        Inteligência Preditiva e Ação
-                    </h3>
-                    <p class="text-slate-600 text-lg mb-6 leading-relaxed">
-                        Nossa IA analisa o histórico e o contexto do cliente. Ela fornece ao agente e ao sistema o melhor caminho de resolução, impactando diretamente seus números.
-                    </p>
-                    <ul id="dyn-feat-list" class="space-y-3">
-                        <li class="flex items-center gap-3 text-slate-700 font-medium">
-                            <i class="ph-fill ph-check-circle text-green-500 text-xl flex-shrink-0"></i> Integração Transparente
-                        </li>
-                        <li class="flex items-center gap-3 text-slate-700 font-medium">
-                            <i class="ph-fill ph-check-circle text-green-500 text-xl flex-shrink-0"></i> Insights Acionáveis
-                        </li>
-                        <li class="flex items-center gap-3 text-slate-700 font-medium">
-                            <i class="ph-fill ph-check-circle text-green-500 text-xl flex-shrink-0"></i> Monitoramento 100%
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Bloco 2 -->
-            <div class="flex flex-col-reverse lg:flex-row items-center gap-12 fade-in-up">
-                <div class="w-full lg:w-1/2">
-                    <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center mb-6">
-                        <i class="ph ph-infinity text-2xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-slate-900 mb-4">
-                        Experiência Sem Atritos
-                    </h3>
-                    <p class="text-slate-600 text-lg mb-6 leading-relaxed">
-                        Reduza a carga da sua equipe. Automatize processos complexos e deixe a inteligência da NiCE orquestrar a jornada, seja no atendimento humano ou via bots avançados.
-                    </p>
-                    <button onclick="submitToBot('explorar_recursos')" class="text-blue-600 font-semibold flex items-center gap-2 hover:text-blue-700 transition-colors">
-                        Explorar todos os recursos <i class="ph ph-arrow-right"></i>
-                    </button>
-                </div>
-                <div class="w-full lg:w-1/2">
-                    <div class="aspect-video rounded-2xl bg-slate-100 border border-slate-200 overflow-hidden relative shadow-xl group cursor-pointer">
-                        <div class="absolute inset-0 bg-gradient-to-bl from-purple-50 to-pink-50 flex items-center justify-center transition-transform group-hover:scale-105">
-                            <i class="ph-duotone ph-users-three text-7xl text-purple-400"></i>
-                        </div>
-                         <div class="absolute top-4 left-4 bg-white/90 backdrop-blur rounded-lg px-3 py-1.5 shadow-sm border border-slate-100">
-                            <p class="font-medium text-slate-700 text-xs flex items-center gap-1">
-                                <span class="relative flex h-2 w-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                                </span>
-                                Agentes e IA Trabalhando Juntos
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- 3. GRÁFICOS E IMPACTO -->
-    <section class="py-24 bg-slate-50 border-y border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16 fade-in-up">
-                <h2 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                    O impacto nos números que importam
-                </h2>
-                <p class="text-lg text-slate-600">
-                    Veja como operações semelhantes à sua transformaram seus principais indicadores rapidamente após a implementação da NiCE.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 fade-in-up">
-                <!-- Card Gráfico 1 -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1">Aprimoramento de KPI</p>
-                            <h4 id="dyn-stat1" class="text-3xl font-bold text-slate-900">+34%</h4>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                            <i class="ph ph-trend-up text-xl"></i>
-                        </div>
-                    </div>
-                    <!-- Gráfico Barras -->
-                    <div class="flex items-end gap-2 h-32 mt-4">
-                        <div class="w-1/3 bg-slate-200 rounded-t-md h-[40%] relative group transition-all hover:opacity-80">
-                            <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">Antes</span>
-                        </div>
-                        <div class="w-1/3 bg-blue-300 rounded-t-md h-[65%] relative group transition-all hover:opacity-80">
-                            <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">Mês 1</span>
-                        </div>
-                        <div class="w-1/3 bg-niceBlue rounded-t-md h-[100%] relative group transition-all hover:opacity-80">
-                            <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity">Mês 3</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card Gráfico 2 -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1" id="dyn-stat2-label">Redução de Custos</p>
-                            <h4 id="dyn-stat2" class="text-3xl font-bold text-slate-900">-22%</h4>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                            <i class="ph ph-trend-down text-xl"></i>
-                        </div>
-                    </div>
-                    <!-- Gráfico Linha -->
-                    <div class="relative h-32 mt-4 flex items-center">
-                        <svg viewBox="0 0 100 40" class="w-full h-full overflow-visible" preserveAspectRatio="none">
-                            <path d="M0,10 L30,5 L60,25 L100,35" fill="none" stroke="#2A85FF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-                            <circle cx="0" cy="10" r="4" fill="#2A85FF" />
-                            <circle cx="30" cy="5" r="4" fill="#2A85FF" />
-                            <circle cx="60" cy="25" r="4" fill="#2A85FF" />
-                            <circle cx="100" cy="35" r="4" fill="#2A85FF" />
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Card Gráfico 3 -->
-                <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-6">
-                        <div>
-                            <p class="text-sm text-slate-500 font-medium mb-1">Satisfação (CSAT)</p>
-                            <h4 class="text-3xl font-bold text-slate-900">4.8/5</h4>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                            <i class="ph ph-star text-xl"></i>
-                        </div>
-                    </div>
-                    <!-- Gráfico Circular -->
-                    <div class="flex justify-center items-center h-32 mt-4">
-                        <div class="relative w-24 h-24">
-                            <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#e2e8f0" stroke-width="3" />
-                                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#10b981" stroke-width="3" stroke-dasharray="96, 100" />
-                            </svg>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <span class="text-xl font-bold text-slate-700">96%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 4. HERO DO CASE DE SUCESSO -->
-    <section id="case-section" class="relative py-32 overflow-hidden bg-niceDark fade-in-up transition-colors duration-1000">
-        <!-- Overlay Base Escuro -->
-        <div class="absolute inset-0 bg-niceDark z-0"></div>
-
-        <!-- Marca D'água da Logo Dinâmica -->
-        <div id="case-logo-bg" class="absolute inset-0 z-[1] logo-watermark"></div>
-
-        <!-- Overlay de Cor Temática da Empresa -->
-        <div id="case-overlay" class="absolute inset-0 z-[2] bg-gradient-to-r opacity-60 mix-blend-multiply pointer-events-none"></div>
-
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                 
-                <!-- Quote e Info -->
+                <div class="glass-panel p-5 rounded-2xl flex gap-4 items-start transition-transform hover:-translate-y-1 duration-300">
+                    <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0 text-purple-400">
+                        <i class="ph-fill ph-trend-up text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white mb-1">Dicas de KPIs</h3>
+                        <p class="text-sm text-slate-400">Descubra soluções para TMA, FCR e mais.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action apontando para o Chat -->
+            <div class="flex items-center gap-6 mt-4">
+                <div class="hidden lg:flex flex-col items-center chat-indicator opacity-80">
+                    <i class="ph ph-arrow-bend-right-down text-4xl text-niceCyan"></i>
+                </div>
                 <div>
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-white font-semibold tracking-wider text-xs uppercase mb-8 border border-white/20 backdrop-blur-sm">
-                        <i class="ph-fill ph-trophy text-yellow-400"></i> Case de Sucesso: <span id="dyn-case-company" class="ml-1">Empresa</span>
-                    </div>
-                    <i class="ph-fill ph-quotes text-5xl text-white/40 mb-6 block"></i>
-                    <h2 id="dyn-case-quote" class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-8 leading-tight">
-                        "A NiCE não apenas melhorou nosso indicador, mas mudou a forma como enxergamos o atendimento."
-                    </h2>
-                    
-                    <!-- Stats Rápidos do Case -->
-                    <div class="flex flex-wrap gap-6 mb-8">
-                        <div>
-                            <p class="text-white/60 text-sm">Resolução</p>
-                            <p class="text-white font-bold text-2xl" id="dyn-case-stat1">89%</p>
-                        </div>
-                        <div>
-                            <p class="text-white/60 text-sm">Retenção</p>
-                            <p class="text-white font-bold text-2xl" id="dyn-case-stat2">+42%</p>
-                        </div>
-                        <div>
-                            <p class="text-white/60 text-sm">ROI</p>
-                            <p class="text-white font-bold text-2xl text-green-400">3.5x</p>
-                        </div>
-                    </div>
+                    <p class="text-xl font-semibold text-white mb-1">Clique no ícone de chat</p>
+                    <p class="text-slate-400 text-sm">No canto inferior direito para iniciar ➔</p>
                 </div>
-
-                <!-- CTA Final -->
-                <div class="bg-white/10 backdrop-blur-xl rounded-3xl p-8 md:p-10 border border-white/20 shadow-2xl relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                    <h3 class="text-2xl font-bold text-white mb-4">Pronto para ser o próximo case de sucesso?</h3>
-                    <p class="text-slate-300 mb-8">
-                        Descubra como a NiCE pode transformar a operação da sua empresa assim como fizemos com a <span id="dyn-case-company-bot" class="font-semibold text-white">Empresa</span>.
-                    </p>
-                    
-                    <form onsubmit="handleFormSubmit(event)" class="space-y-4">
-                        <button type="submit" class="w-full py-4 rounded-xl bg-white text-slate-900 font-bold text-lg hover:bg-slate-100 transition-colors shadow-lg shadow-white/10 flex items-center justify-center gap-2">
-                            Agendar minha Demonstração
-                            <i class="ph ph-calendar-plus text-xl"></i>
-                        </button>
-                    </form>
-                    <p class="text-xs text-center text-slate-400 mt-4">
-                        Sem compromisso. Uma análise direcionada sobre a sua operação.
-                    </p>
-                </div>
-
             </div>
         </div>
-    </section>
+
+        <!-- Coluna da Direita (Elemento Visual Interativo) -->
+        <div class="w-full lg:w-1/2 flex justify-center lg:justify-end relative">
+            <!-- Anel decorativo central -->
+            <div class="relative w-80 h-80 lg:w-[450px] lg:h-[450px] flex items-center justify-center animate-float">
+                <!-- Círculos de borda -->
+                <div class="absolute inset-0 rounded-full border border-white/10 animate-[spin_20s_linear_infinite]"></div>
+                <div class="absolute inset-4 rounded-full border border-dashed border-white/20 animate-[spin_30s_linear_infinite_reverse]"></div>
+                
+                <!-- Centro Brilhante -->
+                <div class="w-40 h-40 lg:w-56 lg:h-56 rounded-full glass-panel flex flex-col items-center justify-center relative z-10 shadow-[0_0_100px_rgba(42,133,255,0.4)]">
+                    <i class="ph-duotone ph-robot text-7xl lg:text-8xl text-niceBlue mb-2"></i>
+                    <span class="font-bold tracking-widest text-white/80">AGENTICO ONLINE</span>
+                </div>
+
+                <!-- Partículas flutuantes -->
+                <div class="absolute top-10 left-10 w-4 h-4 rounded-full bg-niceCyan animate-ping"></div>
+                <div class="absolute bottom-20 right-10 w-3 h-3 rounded-full bg-nicePurple animate-pulse"></div>
+            </div>
+        </div>
+
+    </main>
 
     <!-- FOOTER -->
-    <footer class="bg-[#0B0F19] text-slate-500 py-10 text-center text-sm border-t border-white/5">
-        <p>© 2026 NiCE CX Solutions. Todos os direitos reservados.</p>
-        <p class="mt-2 opacity-60">Este é um ambiente interativo originado pela Agente de IA NI.</p>
+    <footer class="absolute bottom-4 left-0 w-full text-center z-10 pointer-events-none">
+        <p class="text-xs text-white/30 tracking-wider">© 2026 NiCE CX Solutions. Ambiente Simulado.</p>
     </footer>
 
-    <!-- LÓGICA JAVASCRIPT & COGNIGY -->
+    <!-- SCRIPT DO COGNIGY WEBCHAT -->
+    <script src="https://github.com/Cognigy/Webchat/releases/latest/download/webchat.js"></script>
     <script>
-        // --- 1. BANCO DE DADOS DINÂMICO DOS KPIS ---
-        // Adicionada a propriedade logoUrl em cada item
-        const kpiDatabase = {
-            "tma": {
-                name: "TMA (Tempo Médio de Atendimento)",
-                solution: "CXone Copilot para Agentes",
-                desc: "Redução de 15 a 30% no tempo médio de atendimento via sugestões em tempo real, automação de resumos e tabulação da interação guiada por IA.",
-                features: ["Sugestões em Tempo Real", "Resumo Automático de Interação", "Busca Instantânea de Base de Conhecimento"],
-                stat1: "-28%",
-                stat2Label: "Redução de TMA",
-                stat2: "-22%",
-                case: {
-                    company: "ONE Brazil",
-                    theme: "from-pink-800/90 to-purple-900/90", 
-                    logoUrl: "https://br.one-line.com/sites/g/files/lnzjqr1461/files/inline-images/03Container%2B.png",
-                    quote: "A NiCE não apenas reduziu nosso TMA significativamente, mas transformou nossos agentes em especialistas mais eficientes.",
-                    caseStat1: "30% Menos Tempo",
-                    caseStat2: "+15% Satisfação"
-                }
-            },
-            "aht": {
-                name: "TMA (Tempo Médio de Atendimento)",
-                solution: "CXone Copilot para Agentes",
-                desc: "Redução de 15 a 30% no tempo médio de atendimento via sugestões em tempo real, automação de resumos e tabulação da interação guiada por IA.",
-                features: ["Sugestões em Tempo Real", "Resumo Automático de Interação", "Busca Instantânea de Base de Conhecimento"],
-                stat1: "-28%",
-                stat2Label: "Redução de TMA",
-                stat2: "-22%",
-                case: {
-                    company: "ONE Brazil",
-                    theme: "from-pink-800/90 to-purple-900/90",
-                    logoUrl: "https://br.one-line.com/sites/g/files/lnzjqr1461/files/inline-images/03Container%2B.png",
-                    quote: "A NiCE não apenas reduziu nosso TMA significativamente, mas transformou nossos agentes em especialistas mais eficientes.",
-                    caseStat1: "30% Menos Tempo",
-                    caseStat2: "+15% Satisfação"
-                }
-            },
-            "fcr": {
-                name: "FCR (First Contact Resolution)",
-                solution: "CXone Routing & Cognigy IA",
-                desc: "Aumento de resolução no primeiro contato via roteamento inteligente, assistência contextual preditiva e bots conversacionais hiper-resolutivos.",
-                features: ["Roteamento por Habilidade (Skill)", "Bots Cognigy de Alta Resolução", "Contexto Omnichannel Unificado"],
-                stat1: "+45%",
-                stat2Label: "Aumento de Resolução",
-                stat2: "+38%",
-                case: {
-                    company: "Sony PlayStation",
-                    theme: "from-blue-900/90 to-slate-900/90", 
-                    logoUrl: "https://static0.thegamerimages.com/wordpress/wp-content/uploads/2020/01/Playstation-logo-1.jpg",
-                    quote: "Ao integrar o Cognigy com o CXone, conseguimos entender a intenção do jogador instantaneamente e resolver problemas de conta no primeiro contato.",
-                    caseStat1: "85% Resolução 1º Ctt",
-                    caseStat2: "-40% Transferências"
-                }
-            },
-            "csat": {
-                name: "CSAT / NPS",
-                solution: "CXone Feedback Management",
-                desc: "Aceleração dramática nas pesquisas com consumidores por meio das análises geradas pelos Agentes de IA e gestão proativa de sentimentos.",
-                features: ["Pesquisas Inteligentes Pós-Atendimento", "Análise de Sentimento em Tempo Real", "Gamificação de Agentes para Qualidade"],
-                stat1: "+4.8 Pts",
-                stat2Label: "Aumento de NPS",
-                stat2: "+25%",
-                case: {
-                    company: "Henkel",
-                    theme: "from-red-900/90 to-orange-900/90", 
-                    logoUrl: "https://1000logos.net/wp-content/uploads/2020/04/Logo-Henkel.jpg",
-                    quote: "Transformamos Agentes IA orientados por LLM em verdadeiros embaixadores da marca, elevando o CSAT a níveis históricos para a empresa.",
-                    caseStat1: "CSAT 96%",
-                    caseStat2: "Pesquisas +68%"
-                }
-            },
-            "nps": {
-                name: "CSAT / NPS",
-                solution: "CXone Feedback Management",
-                desc: "Aceleração dramática nas pesquisas com consumidores por meio das análises geradas pelos Agentes de IA e gestão proativa de sentimentos.",
-                features: ["Pesquisas Inteligentes Pós-Atendimento", "Análise de Sentimento em Tempo Real", "Gamificação de Agentes para Qualidade"],
-                stat1: "+4.8 Pts",
-                stat2Label: "Aumento de NPS",
-                stat2: "+25%",
-                case: {
-                    company: "Henkel",
-                    theme: "from-red-900/90 to-orange-900/90",
-                    logoUrl: "https://1000logos.net/wp-content/uploads/2020/04/Logo-Henkel.jpg",
-                    quote: "Transformamos Agentes IA orientados por LLM em verdadeiros embaixadores da marca, elevando o CSAT a níveis históricos para a empresa.",
-                    caseStat1: "CSAT 96%",
-                    caseStat2: "Pesquisas +68%"
-                }
-            },
-            "abandono": {
-                name: "Taxa de Abandono",
-                solution: "CXone WFM & Routing",
-                desc: "Redução severa de abandono com previsão de demanda guiada por IA, orquestração de canais digitais e automação para picos de atendimento.",
-                features: ["Previsão de Demanda com IA", "Geração de Escalas Inteligentes", "Transbordo Digital Automático"],
-                stat1: "-60%",
-                stat2Label: "Queda em Abandono",
-                stat2: "-45%",
-                case: {
-                    company: "Itaú",
-                    theme: "from-orange-800/90 to-blue-900/90",
-                    logoUrl: "https://designconceitual.com.br/wp-content/uploads/2023/12/Ita%C3%BA-novo-logotipo-2023-1000x600.jpg",
-                    quote: "A NiCE nos ajudou a orquestrar jornadas completas, garantindo que o cliente sempre seja atendido no momento e canal certos, zerando a frustração.",
-                    caseStat1: "-60% Abandono",
-                    caseStat2: "SL Consistente"
-                }
-            },
-            "qualidade": {
-                name: "Qualidade de Atendimento",
-                solution: "CXone Quality Management",
-                desc: "Monitoramento analítico de 100% das interações garantindo melhoria contínua de qualidade, redução de riscos e compliance automático.",
-                features: ["Monitoramento de 100% da Nuvem", "Avaliação Baseada em IA", "Coaching Direcionado por Dados"],
-                stat1: "100%",
-                stat2Label: "Cobertura de Qualidade",
-                stat2: "100%",
-                case: {
-                    company: "Teleperformance",
-                    theme: "from-purple-800/90 to-fuchsia-900/90", 
-                    logoUrl: "https://meuempregonovo.com.br/wp-content/uploads/2024/03/Teleperformance-1.png",
-                    quote: "A capacidade de auditar cada interação de forma automatizada não só mitigou nossos riscos, mas elevou radicalmente o padrão de entrega das nossas equipes.",
-                    caseStat1: "100% Auditado",
-                    caseStat2: "+30% Produtividade"
-                }
-            },
-            "custo": {
-                name: "Custo por Contato",
-                solution: "Cognigy AI Agents",
-                desc: "Redução drástica de custos operacionais utilizando automação conversacional de ponta para otimizar recursos e resolver chamados sem intervenção humana.",
-                features: ["Voicebots e Chatbots Avançados", "Resolução End-to-End via API", "Integração Híbrida Agente-IA"],
-                stat1: "-40%",
-                stat2Label: "Redução de Custos",
-                stat2: "-35%",
-                case: {
-                    company: "AEGEA",
-                    theme: "from-cyan-900/90 to-blue-900/90", 
-                    logoUrl: "https://saneamentobasico.com.br/wp-content/uploads/2024/03/Aegea-2.jpg",
-                    quote: "A inteligência artificial do Cognigy absorveu um volume imenso de transações rotineiras, reduzindo nosso custo de serviço ao mesmo tempo que agradou o usuário.",
-                    caseStat1: "-40% Custo/Contato",
-                    caseStat2: "ROI 6 Meses"
-                }
-            },
-            "automacao": {
-                name: "Taxa de Automação / Contenção",
-                solution: "Agentic AI by Cognigy",
-                desc: "Crie um nível altíssimo de autoatendimento. Agentes de IA resolvem volumes massivos de interações complexas em linguagem natural e fluida.",
-                features: ["Agentes de IA Generativos", "Fluxos Dinâmicos Baseados em LLM", "Transição Suave para Humanos"],
-                stat1: "+70%",
-                stat2Label: "Aumento em Contenção",
-                stat2: "+65%",
-                case: {
-                    company: "Toyota",
-                    theme: "from-red-900/90 to-stone-900/90",
-                    logoUrl: "https://d2hucwwplm5rxi.cloudfront.net/wp-content/uploads/2022/06/29080100/Toyota-Logo-history-Cover-20220629.jpg",
-                    quote: "Nosso impulso por inovação encontrou na automação da NiCE a ferramenta perfeita. Os bots assumem a jornada primária com maestria e precisão.",
-                    caseStat1: "75% Contenção",
-                    caseStat2: "Autoatendimento 24/7"
-                }
-            },
-            "vendas": {
-                name: "Vendas e Produtividade",
-                solution: "CXone Performance Management",
-                desc: "Aumento direto na conversão de vendas e retenção por meio de dados precisos, gamificação engajadora e gestão estratégica da equipe.",
-                features: ["Gamificação para Vendedores", "Dashboards Analíticos Avançados", "Gestão de Metas em Tempo Real"],
-                stat1: "+32%",
-                stat2Label: "Aumento em Conversão",
-                stat2: "+28%",
-                case: {
-                    company: "Carnival UK",
-                    theme: "from-sky-900/90 to-blue-900/90",
-                    logoUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSR3PW8jv0tUNc0jf0N2muEt0xI3xSumhOIyQ&s",
-                    quote: "Ao gerenciar a performance em tempo real, criamos um ambiente saudável de competição que impulsionou nossas conversões de pacotes muito além da meta.",
-                    caseStat1: "+32% Conversão",
-                    caseStat2: "Retenção Absoluta"
-                }
-            },
-            "default": {
-                name: "Experiência do Cliente (CX)",
-                solution: "NiCE CXone Platform",
-                desc: "A plataforma completa em nuvem que une Automação Conversacional, Gestão de Força de Trabalho e IA para transformar resultados.",
-                features: ["IA Generativa Integrada", "Omnichannel Nativo", "Analytics Avançado"],
-                stat1: "+40%",
-                stat2Label: "Eficiência Operacional",
-                stat2: "+35%",
-                case: {
-                    company: "Líderes de Mercado",
-                    theme: "from-blue-900/90 to-indigo-900/90",
-                    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Nice_logo.svg/2560px-Nice_logo.svg.png",
-                    quote: "Transformar o atendimento em diferencial competitivo é a marca registrada das soluções integradas da NiCE.",
-                    caseStat1: "ROI Imediato",
-                    caseStat2: "CX Premium"
+        initWebchat(
+            "https://endpoint-trial-us.cognigy.ai/c828728c78b42f0e72f72f14d8a18569625b14382e247784d17ddbeda265ddb4",
+            {
+                // Configurações opcionais do Webchat para combinar com a página (se suportado pelo endpoint)
+                settings: {
+                    colorScheme: "dark",
+                    primaryColor: "#2A85FF",
+                    headerTitle: "NI - NiCE",
+                    disableBranding: true
                 }
             }
-        };
-
-        // --- 2. LÓGICA DE RENDERIZAÇÃO ---
-        window.addEventListener("load", () => {
-            
-            // Captura das variáveis do Cognigy com base no seu payload
-            const rawNome = "{{context.nome}}";
-            const rawKpi = "{{context.KPI}}";
-            
-            const userName = rawNome.includes("{{") ? "Visitante" : rawNome;
-            let userKpi = rawKpi.includes("{{") ? "fcr" : rawKpi.toLowerCase().trim(); // Default FCR se vazio no teste
-            
-            // Mapeamento de termos aproximados que o usuário pode falar para as chaves corretas
-            if(userKpi.includes('tempo') || userKpi.includes('tma') || userKpi.includes('aht')) userKpi = 'tma';
-            else if(userKpi.includes('first') || userKpi.includes('fcr')) userKpi = 'fcr';
-            else if(userKpi.includes('nps') || userKpi.includes('csat') || userKpi.includes('satisf')) userKpi = 'csat';
-            else if(userKpi.includes('abandon')) userKpi = 'abandono';
-            else if(userKpi.includes('qualidade')) userKpi = 'qualidade';
-            else if(userKpi.includes('custo')) userKpi = 'custo';
-            else if(userKpi.includes('autom') || userKpi.includes('cont')) userKpi = 'automacao';
-            else if(userKpi.includes('venda') || userKpi.includes('produt')) userKpi = 'vendas';
-            
-            const data = kpiDatabase[userKpi] || kpiDatabase['default'];
-
-            // Atualizando a Interface do Usuário com os Dados
-            document.getElementById('dyn-nome').innerText = userName;
-            document.getElementById('dyn-kpi-title').innerText = data.name;
-            document.getElementById('dyn-kpi-text').innerText = data.name;
-            document.getElementById('dyn-solution').innerText = data.solution;
-            document.getElementById('dyn-solution-sub').innerText = data.solution;
-            document.getElementById('dyn-solution-desc').innerText = data.desc;
-            
-            // Features
-            const featList = document.getElementById('dyn-feat-list');
-            featList.innerHTML = '';
-            data.features.forEach(feat => {
-                featList.innerHTML += `
-                    <li class="flex items-center gap-3 text-slate-700 font-medium">
-                        <i class="ph-fill ph-check-circle text-green-500 text-xl flex-shrink-0"></i> ${feat}
-                    </li>
-                `;
-            });
-
-            // Stats
-            document.getElementById('dyn-stat1').innerText = data.stat1;
-            document.getElementById('dyn-stat2-label').innerText = data.stat2Label;
-            document.getElementById('dyn-stat2').innerText = data.stat2;
-
-            // Case de Sucesso
-            document.getElementById('dyn-case-company').innerText = data.case.company;
-            document.getElementById('dyn-case-company-bot').innerText = data.case.company;
-            document.getElementById('dyn-case-quote').innerText = `"${data.case.quote}"`;
-            document.getElementById('dyn-case-stat1').innerText = data.case.caseStat1;
-            document.getElementById('dyn-case-stat2').innerText = data.case.caseStat2;
-            
-            // Atualiza a cor de fundo do case baseado na marca do cliente
-            const caseOverlay = document.getElementById('case-overlay');
-            caseOverlay.className = `absolute inset-0 z-[2] bg-gradient-to-r opacity-60 mix-blend-multiply pointer-events-none ${data.case.theme}`;
-
-            // Atualiza a Logo de fundo (A marca d'água dinâmica)
-            const caseLogoBg = document.getElementById('case-logo-bg');
-            if(data.case.logoUrl) {
-                caseLogoBg.style.backgroundImage = `url('${data.case.logoUrl}')`;
-            }
-
-            // Trigger das animações de entrada
-            setTimeout(() => {
-                const elements = document.querySelectorAll('.fade-in-up');
-                elements.forEach((el, index) => {
-                    setTimeout(() => {
-                        el.classList.add('loaded');
-                    }, index * 150); // Cascading effect
-                });
-            }, 100);
+        ).then(webchat => {
+            // Se quiser que o chat abra automaticamente assim que a página carregar, descomente a linha abaixo:
+            // webchat.open();
+        }).catch(err => {
+            console.error("Erro ao inicializar o Cognigy Webchat:", err);
         });
-
-        // --- 3. INTEGRAÇÃO COGNIGY SDK ---
-        // Função para submeter botões de ação para o Bot
-        function submitToBot(actionType) {
-            const payload = { 
-                action: actionType,
-                timestamp: new Date().toISOString()
-            };
-            
-            if (window.SDK) {
-                SDK.submit(payload);
-            } else {
-                console.log("Simulação Cognigy Payload:", payload);
-                alert("Em produção, isso enviaria o evento para a NI (Cognigy). Ação: " + actionType);
-            }
-        }
-
-        // Função para o Form do Case de Sucesso
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const payload = {
-                action: 'agendar_demo_success',
-                kpi_interesse: "{{context.KPI}}" // Envia de volta qual era o KPI que ele estava olhando
-            };
-
-            if (window.SDK) {
-                SDK.submit(payload);
-            } else {
-                console.log("Simulação Formulario Cognigy:", payload);
-                alert("Pedido de Demo enviado para a NI com sucesso!");
-            }
-        }
     </script>
 </body>
 </html>
